@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Basics_Console</RootNamespace>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Windows.Devices.Midi2" Version="1.0.13-preview.13.192" />
+  </ItemGroup>
+
+</Project>
