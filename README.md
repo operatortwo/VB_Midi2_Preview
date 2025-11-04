@@ -77,3 +77,7 @@ We receive the Message in the MessageReceivedHandler Sub.
 We can see the Timestamp difference = 135'158 Ticks /10'000 (Ticks/Millisecond) = 13.5158 Milliseconds. Word_0 contains the Midi-Message: 2 for the Msg Type, 5 is the Group we defined in the Message, then the usual 93 78 64 (Note On, Channel 3, Note 78, Velocity 64)  
 After a key was pressed we RemoveHandler for MessageReceive and disconnect from send- and receive- endpoint.
 
+The MessageReceiveHandler Sub should return as soon as possible. Calls to UI-controls should be avoided. 
+I'm working on Examples for WinForms and WPF with an input buffer.
+
+
