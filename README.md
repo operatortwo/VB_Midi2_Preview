@@ -78,6 +78,16 @@ We can see the Timestamp difference = 135'158 Ticks /10'000 (Ticks/Millisecond) 
 After a key was pressed we RemoveHandler for MessageReceive and disconnect from send- and receive- endpoint.
 
 The MessageReceiveHandler Sub should return as soon as possible. Calls to UI-controls should be avoided. 
-I'm working on Examples for WinForms and WPF with an input buffer.
 
+## Basics_Winforms and Basics_WPF
+
+These are the examples for the WinForms and WPF project types.  
+First, an error occurred during Build: Syntax error in *WinRTEventHelpers.cs*. This temporary .cs file was created by CsWinRT but the compiler treated it like a .vb file...  
+As a workaround, the C# console project XProjectionBuilder was added to the solution and the
+packages CsWinRT and Devices.Midi2 were moved there. Now we have to build XProjectionBuilder only once to create the 
+Midi2.NetProjection.   
+Then we can add a reference in the Winforms and WPF projects pointing to the output path of XProjectionBuilder, to be precise to /runtimes/win-x64/lib/net8.0/  
+  
+Furthermore, in Winforms and WPF, we cannot write directly to the user interface within the MessageReceive handler.
+Instead, the application uses a *ConcurrentQueue(Of UInteger)* which is Enqueued in 'MessageReceive' and Dequeued in 'ReadMidiInput' which is regularly called by a timer.
 
