@@ -1,0 +1,18 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Samples"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="860" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Label Content="Message:" HorizontalAlignment="Left" Margin="44,130,0,0" VerticalAlignment="Top" Padding="5,0,5,0"/>
+        <TextBox x:Name="TbMessage" Margin="44,151,75,104" TextWrapping="Wrap" IsReadOnly="True" Background="#FFFBFBFF" Padding="5,5,5,5" VerticalScrollBarVisibility="Auto"/>
+        <Button x:Name="BtnClose" Content="Close" HorizontalAlignment="Left" Margin="369,0,0,32" Width="94" Background="#FFDBE6F9" IsCancel="True" IsDefault="True"  Height="30" VerticalAlignment="Bottom"/>
+        <Button x:Name="BtnSendMsg" Content="Send Message" HorizontalAlignment="Left" Margin="415,118,0,0" VerticalAlignment="Top" Width="96" IsEnabled="False"/>
+        <Button x:Name="BtnEnumerate" Content="Endpoints" HorizontalAlignment="Left" Margin="243,58,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="BtnSendNote" Content="SendNote" HorizontalAlignment="Left" Margin="414,58,0,0" VerticalAlignment="Top" Width="72" IsEnabled="False"/>
+
+    </Grid>
+</Window>

@@ -21,15 +21,16 @@ I spent many hours figuring out what is necessary to use the new technology. The
 Based on my experience so far, the following is necessary:
 -	A modern Computer with Windows 11, Build 26100.0 (24H2) or up.
 -	Visual Studio 2022 (V 17.14.xx) and working NuGet Packet Manager (normally integrated)
-    - The basic .Net desktop development Workload seems to be sufficient. So far, I have not needed the Workloads for C++, UI3, nor the Windows SDK component.
+    - The basic .Net desktop development Workload seems to be sufficient. So far, I have not needed the Workloads for C++ or UI3.
+    - Windows SDK must be installed.
 -	It is required to have the will to develop for the .NET platform 8.0 or up (.NET Framework is not sufficient)
  In .NET 8.0, you have the choice between Console, WinForms and WPF application.
 -	The CsWinRT package, can be obtained from NuGet
 -	The Microsoft.Windows.Devices.Midi2.1.0.13-preview.13.192.nupkg, must be downloaded from /Microsoft/MIDI/Releases  
    [preview 13.nupkg](https://github.com/microsoft/MIDI/releases/download/preview-13/Microsoft.Windows.Devices.Midi2.1.0.13-preview.13.192.nupkg)
--	Sometimes a little patience is needed. Incomprehensible and misleading error messages may appear. Sometimes these disappear after reloading the solution.
-- It is absolutely necessary to set the project target to  .NET 8.0 - Windows - 10.0.26100.0 - minimal Version 10.0.26100.0 (or up). Lower target versions will not work. However, this is logical, as the features will only be implemented in future operating system versions and there is no way to provide older OS versions with these updates.
-It's not just about a single driver that can be installed, but about a service in the operating system, as well as applications that (apparently) use the WinRT.Runtime.
+-	Sometimes a little patience is needed. It is not always obvious what the error messages and warnings mean.
+- It is iportant to set the project target to  .NET 8.0 - Windows - 10.0.26100.0 - minimal Version 10.0.26100.0 (or up). Lower target versions will not work. However, this is logical, as the features will only be implemented in future operating system versions and there is no way to provide older OS versions with these updates.
+- To get rid of the MSB3270 warning, you need to change the setting [Project]/Properties/Compile/Options/Target CPU from 'Any CPU' to 'x64'
 
 ## Basics_Console  
 
@@ -41,8 +42,8 @@ Microsoft.Windows.Devices.Midi2  1.0.13-preview.13.192
 Failed to create MidiDesktopAppSdkInitializer
 Press ESC to close the Console
 ````
-We can see the * *BuildFullVersion* * Constant from the Midi2 library  
-_Initialization.MidiDesktopAppSdkInitializer.Create()_ fails, since there is no Midi2 on the cpmputer.
+We can see the *BuildFullVersion* Constant from the Midi2 library  
+_Initialization.MidiDesktopAppSdkInitializer.Create()_ fails, since there is no Midi2 on the computer.
 
 - On the Development Computer with Midi2-SDK and Tools installed the following apperars in the Console window
 
@@ -91,3 +92,6 @@ Then we can add a reference in the Winforms and WPF projects pointing to the out
 Furthermore, in Winforms and WPF, we cannot write directly to the user interface within the MessageReceive handler.
 Instead, the application uses a *ConcurrentQueue(Of UInteger)* which is Enqueued in 'MessageReceive' and Dequeued in 'ReadMidiInput' which is regularly called by a timer.
 
+## Samples
+
+Includes various tests.
