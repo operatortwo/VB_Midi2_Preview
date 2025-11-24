@@ -15,8 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Windows.Devices.Midi2" Version="1.0.13-preview.13.192" />
+    <Reference Include="Microsoft.Windows.Devices.Midi2.NetProjection">
+      <HintPath>..\_GetProjection\bin\Debug\net8.0-windows10.0.26100.0\runtimes\win-x64\lib\net8.0\Microsoft.Windows.Devices.Midi2.NetProjection.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

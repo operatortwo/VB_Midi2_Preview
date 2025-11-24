@@ -87,9 +87,14 @@ Class MainWindow
         '    MidiEndpointDeviceInformationFilters.VirtualDeviceResponder)
 
         '--- True Midi-Devices
+        'eplist = MidiEndpointDeviceInformation.FindAll(
+        '    MidiEndpointDeviceInformationSortOrder.Name,
+        'MidiEndpointDeviceInformationFilters.AllStandardEndpoints)
+
         eplist = MidiEndpointDeviceInformation.FindAll(
             MidiEndpointDeviceInformationSortOrder.Name,
-        MidiEndpointDeviceInformationFilters.StandardNativeMidi1ByteFormat)
+            MidiEndpointDeviceInformationFilters.AllStandardEndpoints)
+
 
 
         WriteMessageLine("--> enumerate endpoints - " & eplist.Count & " Endpoints returned")
@@ -152,12 +157,13 @@ Class MainWindow
                 Dim srcp = endpoint.FindAllAssociatedMidi1PortsForThisEndpoint(Midi1PortFlow.MidiMessageSource)
                 Dim dstp = endpoint.FindAllAssociatedMidi1PortsForThisEndpoint(Midi1PortFlow.MidiMessageDestination)
 
+
                 For Each prt In srcp
-                    WriteMessageLine("--> source  " & prt.PortName & "  Num: " & prt.PortNumber & "  Grp: " & prt.Group.Index)
+                    WriteMessageLine("--> source  " & prt.PortName & "  Num: " & prt.PortNumber & "  GrpVal: " & prt.Group.DisplayValue & "  GrpNdx: " & prt.Group.Index)
                 Next
 
                 For Each prt In dstp
-                    WriteMessageLine("--> destination  " & prt.PortName & "  Num: " & prt.PortNumber & "  Grp: " & prt.Group.Index)
+                    WriteMessageLine("--> destination  " & prt.PortName & "  Num: " & prt.PortNumber & "  GrpVal: " & prt.Group.DisplayValue & "  GrpNdx: " & prt.Group.Index)
                 Next
 
                 'Dim devinfo = endpoint.GetContainerDeviceInformation()
