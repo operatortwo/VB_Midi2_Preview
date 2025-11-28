@@ -30,7 +30,15 @@ Based on my experience so far, the following is necessary:
    [preview 13.nupkg](https://github.com/microsoft/MIDI/releases/download/preview-13/Microsoft.Windows.Devices.Midi2.1.0.13-preview.13.192.nupkg)
 -	Sometimes a little patience is needed. It is not always obvious what the error messages and warnings mean.
 - It is iportant to set the project target to  .NET 8.0 - Windows - 10.0.26100.0 - minimal Version 10.0.26100.0 (or up). Lower target versions will not work. However, this is logical, as the features will only be implemented in future operating system versions and there is no way to provide older OS versions with these updates.
-- To get rid of the MSB3270 warning, you need to change the setting [Project]/Properties/Compile/Options/Target CPU from 'Any CPU' to 'x64'
+- To get rid of the MSB3270 warning, you need to change the setting [Project]/Properties/Compile/Options/Target CPU from 'Any CPU' to 'x64'  
+
+
+Project file contains:
+```
+<TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+
+<PlatformTarget>x64</PlatformTarget>
+```
 
 ## Basics_Console  
 
@@ -84,13 +92,25 @@ The MessageReceiveHandler Sub should return as soon as possible. Calls to UI-con
 
 These are the examples for the WinForms and WPF project types.  
 First, an error occurred during Build: Syntax error in *WinRTEventHelpers.cs*. This temporary .cs file was created by CsWinRT but the compiler treated it like a .vb file...  
-As a workaround, the C# console project XProjectionBuilder was added to the solution and the
+As a workaround, the C# console project _GetProjection was added to the solution and the
 packages CsWinRT and Devices.Midi2 were moved there. Now we have to build XProjectionBuilder only once to create the 
 Midi2.NetProjection.   
 Then we can add a reference in the Winforms and WPF projects pointing to the output path of XProjectionBuilder, to be precise to /runtimes/win-x64/lib/net8.0/  
   
 Furthermore, in Winforms and WPF, we cannot write directly to the user interface within the MessageReceive handler.
 Instead, the application uses a *ConcurrentQueue(Of UInteger)* which is Enqueued in 'MessageReceive' and Dequeued in 'ReadMidiInput' which is regularly called by a timer.
+
+## Basics_WPF_Direct
+
+The following is added to the Project-file
+```
+<PropertyGroup>
+    <CsWinRTEnabled>false</CsWinRTEnabled>
+</PropertyGroup>
+```
+
+This allows a Visual Basic project to use the midi2 package without having to go through referencing.
+This makes *Syntax error in WinRTEventHelpers.cs* disappear.
 
 ## Samples
 

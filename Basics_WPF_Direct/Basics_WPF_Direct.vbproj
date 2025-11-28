@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
-    <RootNamespace>Build_Error</RootNamespace>
+    <RootNamespace>Basics_WPF_Direct</RootNamespace>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
@@ -32,4 +32,8 @@
     <PackageReference Include="Microsoft.Windows.Devices.Midi2" Version="1.0.13-preview.13.192" />
   </ItemGroup>
 
+	<PropertyGroup>
+		<CsWinRTEnabled>false</CsWinRTEnabled>
+	</PropertyGroup>
+	
 </Project>

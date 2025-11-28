@@ -2,7 +2,6 @@
 Imports Microsoft.Windows.Devices.Midi2
 Imports Microsoft.Windows.Devices.Midi2.Initialization
 Imports Microsoft.Windows.Devices.Midi2.Messages
-Imports Windows.Networking
 
 Class MainWindow
 
