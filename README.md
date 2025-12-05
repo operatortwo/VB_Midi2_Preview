@@ -1,35 +1,39 @@
 # How to access Midi 2.0 Services in Windows using Visual Basic
 
 ### This Repository is related to  www.github.com/microsoft/midi , the upcoming integration of Midi 2.0 into Windows.  
+
+All projects refer to **Preview 13** (not rc-1) running on Windows 11 retail 25H2
+
 #### Basics_Console is based on the C# example www.github.com/microsoft/MIDI/tree/main/samples/csharp-net/basics 
 
 Currently, there is only a preview version of Midi 2 available for Windows.  
-On a standard Windows installation, the applications will naturally not be able to execute any Midi2 functions. However, you can check 
+On a standard Windows installation, the applications will not be able to execute any Midi2 functions. However, you can check 
 if the development environment is able to build the application and the Midi2 library can be connected.  
 Once Midi2 is rolled out, we can continue working from this basis.  
-I have tested the Applications on a Coputer with a normal Installation and on a Computer with the Midi2-SDK and Tools installed.  
+I have tested the Applications on a Coputer with a normal Installation and on a Computer with the Midi2-SDK and Tools installed (**from preview 13, not rc-1**).  
 **The installation of the Midi2 SDK should only be done on a computer that is used exclusively for development.**  
 
 
-## Background
-At first, I was shocked when I read that it is expected that C++/WinRT is the primary way developers will use the Midi2 API and SDK.  
-Do I now have to either stick with MIDI 1.0 and WinMM, or leave VB, switch to C# and learn to program Windows apps?  
-The answer is: None of that, under certain conditions.
+## Overview
+It is expected that C++/WinRT is the primary way developers will use the Midi2 API and SDK.  
+However, there is also support for C# desktop applications.  
+Visual Basic is not directly supported, but falls into the category of 'other .NET languages' which may also work.
 
-I spent many hours figuring out what is necessary to use the new technology. The main part was working on the settings of Visual Studio and selecting the right tools and packages. The goal was to find only the necessary accessories and not to add additional (superfluous) parts indiscriminately.
+
+I spent many hours figuring out what is necessary to use the new technology. The main part was working on the settings of Visual Studio and selecting the right tools and packages. 
 
 Based on my experience so far, the following is necessary:
 -	A modern Computer with Windows 11, Build 26100.0 (24H2) or up.
 -	Visual Studio 2022 (V 17.14.xx) and working NuGet Packet Manager (normally integrated)
     - The basic .Net desktop development Workload seems to be sufficient. So far, I have not needed the Workloads for C++ or UI3.
-    - Windows SDK must be installed.
--	It is required to have the will to develop for the .NET platform 8.0 or up (.NET Framework is not sufficient)
- In .NET 8.0, you have the choice between Console, WinForms and WPF application.
--	The CsWinRT package, can be obtained from NuGet
+    - Windows SDK 10.0.26100 must be installed. (for example, as a single component in the Visual Studio installer)
+-	It is required to use the .NET platform 8.0 (10.0), .NET Framework is not sufficient.
+ In .NET 8.0 (10.0), you have the choice between Console, WinForms and WPF application.
+-	The CsWinRT package, can be obtained from NuGet (will no longer be needed from rc-1 onwards.)
 -	The Microsoft.Windows.Devices.Midi2.1.0.13-preview.13.192.nupkg, must be downloaded from /Microsoft/MIDI/Releases  
    [preview 13.nupkg](https://github.com/microsoft/MIDI/releases/download/preview-13/Microsoft.Windows.Devices.Midi2.1.0.13-preview.13.192.nupkg)
 -	Sometimes a little patience is needed. It is not always obvious what the error messages and warnings mean.
-- It is iportant to set the project target to  .NET 8.0 - Windows - 10.0.26100.0 - minimal Version 10.0.26100.0 (or up). Lower target versions will not work. However, this is logical, as the features will only be implemented in future operating system versions and there is no way to provide older OS versions with these updates.
+- It is iportant to set the project target to  .NET 8.0 - Windows - 10.0.26100.0 - minimal Version 10.0.26100.0 (or up). Lower target versions will not work. 
 - To get rid of the MSB3270 warning, you need to change the setting [Project]/Properties/Compile/Options/Target CPU from 'Any CPU' to 'x64'  
 
 
@@ -93,10 +97,12 @@ The MessageReceiveHandler Sub should return as soon as possible. Calls to UI-con
 These are the examples for the WinForms and WPF project types.  
 First, an error occurred during Build: Syntax error in *WinRTEventHelpers.cs*. This temporary .cs file was created by CsWinRT but the compiler treated it like a .vb file...  
 As a workaround, the C# console project _GetProjection was added to the solution and the
-packages CsWinRT and Devices.Midi2 were moved there. Now we have to build XProjectionBuilder only once to create the 
+packages CsWinRT and Devices.Midi2 were moved there. Now we have to build _GetProjection only once to create the 
 Midi2.NetProjection.   
-Then we can add a reference in the Winforms and WPF projects pointing to the output path of XProjectionBuilder, to be precise to /runtimes/win-x64/lib/net8.0/  
-  
+Then we can add a reference in the Winforms and WPF projects pointing to the output path of _GetProjection, to be precise to /runtimes/win-x64/lib/net8.0/  
+This workaround will be eliminated in future versions. Only the Midi2 package will then be required.
+
+
 Furthermore, in Winforms and WPF, we cannot write directly to the user interface within the MessageReceive handler.
 Instead, the application uses a *ConcurrentQueue(Of UInteger)* which is Enqueued in 'MessageReceive' and Dequeued in 'ReadMidiInput' which is regularly called by a timer.
 
