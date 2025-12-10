@@ -1,0 +1,19 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Test_Midi_IO_2"
+        mc:Ignorable="d"
+        Title="Test Midi_IO_2" Height="500" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Button x:Name="BtnClose" Content="Close" Margin="133,0,0,63" IsCancel="True" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="50" Background="#FFE0F1FF"/>
+        <TextBox x:Name="TbMessage" HorizontalAlignment="Left" Margin="100,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="231" Height="189" IsReadOnly="True"/>
+        <ListBox x:Name="LbMidiOutput" Margin="0,30,61,186" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Right" Width="272" />
+        <ListBox x:Name="LbMidiInput" Margin="0,0,61,25" d:ItemsSource="{d:SampleData ItemCount=5}" Height="116" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="272" />
+        <Label Content="Output:" Margin="0,9,293,0" VerticalAlignment="Top" Padding="0,0,0,0" HorizontalAlignment="Right" Width="40"/>
+        <Label Content="Input:" HorizontalAlignment="Right" Margin="0,0,303,146" VerticalAlignment="Bottom" Padding="0,0,0,0"/>
+        <Label Content="List Midi 1 Ports&#xD;&#xA;using Endpoint Watcher" HorizontalAlignment="Right" Margin="0,30,400,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+
+    </Grid>
+</Window>

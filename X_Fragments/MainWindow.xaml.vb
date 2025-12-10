@@ -1,10 +1,7 @@
-﻿Imports System.Net
-Imports Microsoft.Windows.Devices.Midi2
+﻿Imports Microsoft.Windows.Devices.Midi2
 Imports Microsoft.Windows.Devices.Midi2.Initialization
 Imports Microsoft.Windows.Devices.Midi2.Messages
-
 Class MainWindow
-
 
     Private Initializer As MidiDesktopAppSdkInitializer
     Private Session As MidiSession
@@ -20,10 +17,6 @@ Class MainWindow
 
     Private Sub BtnClose_Click(sender As Object, e As RoutedEventArgs) Handles BtnClose.Click
         Close()
-    End Sub
-
-    Private Sub BtnSendMsg_Click(sender As Object, e As RoutedEventArgs) Handles BtnSendMsg.Click
-
     End Sub
 
     Private Function StartSession() As Boolean
@@ -224,4 +217,5 @@ Class MainWindow
 
 
     End Sub
+
 End Class

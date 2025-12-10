@@ -118,6 +118,14 @@ The following is added to the Project-file
 This allows a Visual Basic project to use the midi2 package without having to go through referencing.
 This makes *Syntax error in WinRTEventHelpers.cs* disappear.
 
-## Samples
+## Midi_IO_2
+First draft of a library for using the midi2 services.
 
-Includes various tests.
+
+## Test_Midi_IO_2
+Example of an application that uses Midi2.
+
+
+## X_Fragments
+
+Used as test area..
