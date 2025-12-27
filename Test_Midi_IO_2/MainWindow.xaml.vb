@@ -1,4 +1,6 @@
-﻿Class MainWindow
+﻿Imports Microsoft.Windows.Devices.Midi2
+
+Class MainWindow
 
     Public WithEvents mio As New Midi_IO_2.Midi_IO_2
 
@@ -37,6 +39,25 @@
             LbMidiInput.Items.Add(port.Name)
         Next
 
+        UpdateInputSelector()                   ' update list and try to keep selected
+        UpdateOutputSelector()                  ' update list and try to keep selected
+
+    End Sub
+
+    Private Sub CmbOutputSelector_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles CmbOutputSelector.SelectionChanged
+        SelectedOutputChanged()
+    End Sub
+
+    Private Sub CmbInputSelector_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles CmbInputSelector.SelectionChanged
+        SelectedInputChanged()
+    End Sub
+
+    Private Sub BtnCloseSelectedOutput_Click(sender As Object, e As RoutedEventArgs) Handles BtnCloseSelectedOutput.Click
+        CmbOutputSelector.SelectedItem = Nothing
+    End Sub
+
+    Private Sub BtnCloseSelectedInput_Click(sender As Object, e As RoutedEventArgs) Handles BtnCloseSelectedInput.Click
+        CmbInputSelector.SelectedItem = Nothing
     End Sub
 
 End Class

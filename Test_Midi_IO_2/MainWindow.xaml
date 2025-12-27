@@ -7,13 +7,41 @@
         mc:Ignorable="d"
         Title="Test Midi_IO_2" Height="500" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
-        <Button x:Name="BtnClose" Content="Close" Margin="133,0,0,63" IsCancel="True" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="50" Background="#FFE0F1FF"/>
-        <TextBox x:Name="TbMessage" HorizontalAlignment="Left" Margin="100,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="231" Height="189" IsReadOnly="True"/>
-        <ListBox x:Name="LbMidiOutput" Margin="0,30,61,186" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Right" Width="272" />
-        <ListBox x:Name="LbMidiInput" Margin="0,0,61,25" d:ItemsSource="{d:SampleData ItemCount=5}" Height="116" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="272" />
-        <Label Content="Output:" Margin="0,9,293,0" VerticalAlignment="Top" Padding="0,0,0,0" HorizontalAlignment="Right" Width="40"/>
-        <Label Content="Input:" HorizontalAlignment="Right" Margin="0,0,303,146" VerticalAlignment="Bottom" Padding="0,0,0,0"/>
-        <Label Content="List Midi 1 Ports&#xD;&#xA;using Endpoint Watcher" HorizontalAlignment="Right" Margin="0,30,400,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+        <TabControl>
+            <TabItem x:Name="TiEndpointWatcher" Header="Endpoint Watcher">
+                <Grid>
+                    <Button x:Name="BtnClose" Content="Close" Margin="133,0,0,63" IsCancel="True" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="50" Background="#FFE0F1FF"/>
+                    <TextBox x:Name="TbMessage" HorizontalAlignment="Left" Margin="100,91,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="231" Height="189" IsReadOnly="True"/>
+                    <ListBox x:Name="LbMidiOutput" Margin="0,30,61,186" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Right" Width="272" />
+                    <ListBox x:Name="LbMidiInput" Margin="0,0,61,25" d:ItemsSource="{d:SampleData ItemCount=5}" Height="116" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="272" />
+                    <Label Content="Output:" Margin="0,9,293,0" VerticalAlignment="Top" Padding="0,0,0,0" HorizontalAlignment="Right" Width="40"/>
+                    <Label Content="Input:" HorizontalAlignment="Right" Margin="0,0,303,146" VerticalAlignment="Bottom" Padding="0,0,0,0"/>
+                    <Label Content="List Midi 1 Ports&#xD;&#xA;using Endpoint Watcher" HorizontalAlignment="Right" Margin="0,30,400,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+                </Grid>
+            </TabItem>
 
+            <TabItem x:Name="Ti_IO_Test" Header="IO Test">
+                <Grid>
+                    <ComboBox x:Name="CmbInputSelector" HorizontalAlignment="Left" Margin="426,40,0,0" VerticalAlignment="Top" Width="200"/>
+                    <Label Content="Input:" HorizontalAlignment="Left" Margin="426,19,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+                    <Label Content="Output:" HorizontalAlignment="Left" Margin="25,19,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+                    <ComboBox x:Name="CmbOutputSelector" HorizontalAlignment="Left" Margin="25,40,0,0" VerticalAlignment="Top" Width="200"/>
+                    <TextBox x:Name="TbOutputData" HorizontalAlignment="Left" Margin="25,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="141" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto"/>
+                    <TextBox x:Name="TbInputData" HorizontalAlignment="Left" Margin="426,194,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="209" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto"/>
+                    <CheckBox x:Name="CbFilterTimingClock" Content="Filter Timing-Clock" HorizontalAlignment="Left" Margin="422,108,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="CbFilterActiveSensing" Content="Filter Active Sensing" HorizontalAlignment="Left" Margin="576,108,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="Btn_ID_Request" Content="ID Request" HorizontalAlignment="Left" Margin="64,216,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="Btn_GM_On" Content="GM On" HorizontalAlignment="Left" Margin="175,216,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="BtnCloseSelectedOutput" Content="Close" HorizontalAlignment="Left" Margin="274,41,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="BtnCloseSelectedInput" Content="Close" HorizontalAlignment="Left" Margin="693,41,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="BtnSendNote" Content="Button" HorizontalAlignment="Left" Margin="125,132,0,0" VerticalAlignment="Top"/>
+
+
+
+                </Grid>
+            </TabItem>
+
+
+        </TabControl>
     </Grid>
 </Window>

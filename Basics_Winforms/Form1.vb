@@ -208,7 +208,8 @@ Public Class Form1
                 InputQueue.TryDequeue(TimestampHigh)
                 InputQueue.TryDequeue(timestampLow)
 
-                Timestamp = TimestampHigh << 32
+                Timestamp = TimestampHigh
+                Timestamp = Timestamp << 32
                 Timestamp = Timestamp Or timestampLow
 
                 DecodeMidi2Message(dword0, dword1, dword2, dword3, Timestamp)

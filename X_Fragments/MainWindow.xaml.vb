@@ -152,10 +152,12 @@ Class MainWindow
 
                 For Each prt In srcp
                     WriteMessageLine("--> source  " & prt.PortName & "  Num: " & prt.PortNumber & "  GrpVal: " & prt.Group.DisplayValue & "  GrpNdx: " & prt.Group.Index)
+                    WriteMessageLine("     " & prt.PortDeviceId)
                 Next
 
                 For Each prt In dstp
                     WriteMessageLine("--> destination  " & prt.PortName & "  Num: " & prt.PortNumber & "  GrpVal: " & prt.Group.DisplayValue & "  GrpNdx: " & prt.Group.Index)
+                    WriteMessageLine("     " & prt.PortDeviceId)
                 Next
 
                 'Dim devinfo = endpoint.GetContainerDeviceInformation()
@@ -176,7 +178,7 @@ Class MainWindow
 
     End Sub
 
-    Private Sub BtnSendNote_Click(sender As Object, e As RoutedEventArgs) Handles BtnSendNote.Click
+    Private Sub BtnSendNote_Click(sender As Object, e As RoutedEventArgs)
 
         Dim eplist As IReadOnlyList(Of MidiEndpointDeviceInformation)
 
@@ -213,9 +215,71 @@ Class MainWindow
             ' // could also use the SendWords methods, etc.
 
 
+
         End If
 
 
     End Sub
 
+
+    Dim sendConn As MidiEndpointConnection
+
+    Private Sub BtnSendNote_PreviewMouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs) Handles BtnSendNote.PreviewMouseLeftButtonDown
+        Dim eplist As IReadOnlyList(Of MidiEndpointDeviceInformation)
+
+        eplist = MidiEndpointDeviceInformation.FindAll(
+           MidiEndpointDeviceInformationSortOrder.Name,
+       MidiEndpointDeviceInformationFilters.StandardNativeMidi1ByteFormat)
+
+        If eplist IsNot Nothing Then
+
+            Dim nof = eplist(0).GetContainerDeviceInformation
+            Dim name As String = nof.Name
+            Dim deviceID As String = nof.Id
+
+            'Dim sendConn = Session.CreateEndpointConnection(deviceID)
+            sendConn = Session.CreateEndpointConnection(eplist(0).EndpointDeviceId)
+
+            If sendConn.Open() = False Then
+                Console.WriteLine("Could not open send endpoint")
+                Exit Sub
+            End If
+
+
+            Dim ump32 As MidiMessage32 = MidiMessageBuilder.BuildMidi1ChannelVoiceMessage(
+                        MidiClock.Now,                                          ' current time
+                        New MidiGroup(0),                                       ' Group 5
+                        Midi1ChannelVoiceMessageStatus.NoteOn,                  ' NoteOn (9)
+                        New MidiChannel(0),                                     ' channel 3
+                        64,                                                    ' note 120  (&h78)
+                        100)                                                    ' velocity 100  (&h64)
+
+            Console.WriteLine("Sending MessagePacket")
+            ' C# sendEndpoint.SendSingleMessagePacket((IMidiUniversalPacket)ump32);
+            sendConn.SendSingleMessagePacket(ump32)
+            ' // could also use the SendWords methods, etc.
+
+
+
+        End If
+    End Sub
+
+    Private Sub BtnSendNote_PreviewMouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs) Handles BtnSendNote.PreviewMouseLeftButtonUp
+
+
+        Dim ump32 As MidiMessage32 = MidiMessageBuilder.BuildMidi1ChannelVoiceMessage(
+                        MidiClock.Now,                                          ' current time
+                        New MidiGroup(0),                                       ' Group 5
+                        Midi1ChannelVoiceMessageStatus.NoteOff,                  ' NoteOn (9)
+                        New MidiChannel(0),                                     ' channel 3
+                        64,                                                    ' note 120  (&h78)
+                        0)                                                    ' velocity 100  (&h64)
+
+        sendConn.SendSingleMessagePacket(ump32)
+
+
+
+
+
+    End Sub
 End Class

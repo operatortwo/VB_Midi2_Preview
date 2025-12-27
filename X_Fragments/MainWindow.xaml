@@ -12,7 +12,7 @@
         <Button x:Name="BtnClose" Content="Close" HorizontalAlignment="Left" Margin="369,0,0,32" Width="94" Background="#FFDBE6F9" IsCancel="True" IsDefault="True"  Height="30" VerticalAlignment="Bottom"/>
         <Button x:Name="BtnSendMsg" Content="Send Message" HorizontalAlignment="Left" Margin="415,118,0,0" VerticalAlignment="Top" Width="96" IsEnabled="False"/>
         <Button x:Name="BtnEnumerate" Content="Endpoints" HorizontalAlignment="Left" Margin="243,58,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="BtnSendNote" Content="SendNote" HorizontalAlignment="Left" Margin="414,58,0,0" VerticalAlignment="Top" Width="72" IsEnabled="False"/>
+        <Button x:Name="BtnSendNote" Content="SendNote" HorizontalAlignment="Left" Margin="414,58,0,0" VerticalAlignment="Top" Width="72"/>
 
     </Grid>
 </Window>

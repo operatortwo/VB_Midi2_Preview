@@ -75,10 +75,12 @@ Partial Public Class Midi_IO_2
         EnumDelay.Start()
     End Sub
 
+    Private MidiInputList2 As New List(Of MidiInput)
+    Private MidiOutputList2 As New List(Of MidiOutput)
 
     Private Sub DelayedEnumerateInOut(sender As Object, e As ElapsedEventArgs)
-        MidiInputList.Clear()
-        MidiOutputList.Clear()
+        MidiInputList2.Clear()
+        MidiOutputList2.Clear()
 
         '--- inputs
         For Each ep In EndpointList
@@ -89,12 +91,14 @@ Partial Public Class Midi_IO_2
                 Dim inp As New MidiInput
                 inp.Name = port.PortName
                 inp.Group = port.Group.Index
+                inp.PortDeviceID = port.PortDeviceId
                 inp.Endpoint = ep.Value
-                MidiInputList.Add(inp)
+                MidiInputList2.Add(inp)
             Next
         Next
 
-        MidiInputList.Sort(Function(x, y) x.Name.CompareTo(y.Name))
+        ModifyInputList(MidiInputList, MidiInputList2)
+        MidiInputList.Sort(Function(x, y) x.Name.CompareTo(y.Name))     ' sort by Name
 
         '--- outputs
         For Each ep In EndpointList
@@ -105,15 +109,58 @@ Partial Public Class Midi_IO_2
                 Dim outp As New MidiOutput
                 outp.Name = port.PortName
                 outp.Group = port.Group.Index
+                outp.PortDeviceID = port.PortDeviceId
                 outp.Endpoint = ep.Value
-                MidiOutputList.Add(outp)
+                MidiOutputList2.Add(outp)
             Next
         Next
 
-        MidiOutputList.Sort(Function(x, y) x.Name.CompareTo(y.Name))
+        ModifyOutputList(MidiOutputList, MidiOutputList2)
+        MidiOutputList.Sort(Function(x, y) x.Name.CompareTo(y.Name))    ' sort by name
 
         RaiseEvent MidiInOutListChanged()
     End Sub
 
+
+    Private Sub ModifyInputList(ByRef list1 As List(Of MidiInput), list2 As List(Of MidiInput))
+
+        '--- add new Inputs (contained in List2 but not in List1) ---
+        For Each inp In list2
+            If list1.Exists(Function(x) x.Name = inp.Name) = False Then
+                inp.Session = Session
+                inp.ID = GetNewInOutID()
+                list1.Add(inp)
+            End If
+        Next
+
+        '--- remove unlisted Outputs (contained in List1 but not in List2 ---
+        For i = list1.Count - 1 To 0 Step -1
+            Dim inp As MidiInput = list1(i)
+            If list2.Exists(Function(x) x.Name = inp.Name) = False Then
+                list1.Remove(inp)
+            End If
+        Next
+
+    End Sub
+
+
+    Private Sub ModifyOutputList(ByRef list1 As List(Of MidiOutput), list2 As List(Of MidiOutput))
+        '--- add new Outputs (contained in List2 but not in List1) ---
+        For Each outp In list2
+            If list1.Exists(Function(x) x.Name = outp.Name) = False Then
+                outp.Session = Session
+                outp.ID = GetNewInOutID()
+                list1.Add(outp)
+            End If
+        Next
+
+        '--- remove unlisted Outputs (contained in List1 but not in List2 ---
+        For i = list1.Count - 1 To 0 Step -1
+            Dim outp As MidiOutput = list1(i)
+            If list2.Exists(Function(x) x.Name = outp.Name) = False Then
+                list1.Remove(outp)
+            End If
+        Next
+    End Sub
 
 End Class
