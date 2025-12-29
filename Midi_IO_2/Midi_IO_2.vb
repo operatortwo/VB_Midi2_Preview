@@ -53,10 +53,14 @@ Public Class Midi_IO_2
     End Function
 
     Public Sub StopMidiSession()
-        StopEndpointWatcher()
-        If Session IsNot Nothing Then Session.Dispose()
-        SessionIsOpen = False
-        Session = Nothing
+        If EndpointWatcher IsNot Nothing Then
+            StopEndpointWatcher()
+        End If
+        If Session IsNot Nothing Then
+            Session.Dispose()
+            SessionIsOpen = False
+            Session = Nothing
+        End If
         If Initializer IsNot Nothing Then Initializer.Dispose()
     End Sub
 
