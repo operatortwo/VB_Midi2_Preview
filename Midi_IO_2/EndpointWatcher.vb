@@ -35,6 +35,7 @@ Partial Public Class Midi_IO_2
         RemoveHandler EndpointWatcher.Stopped, AddressOf EndpointWatcherStopped
         RemoveHandler EnumDelay.Elapsed, AddressOf DelayedEnumerateInOut
 
+        EndpointWatcher = Nothing
     End Sub
 
 

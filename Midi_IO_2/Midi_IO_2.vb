@@ -47,12 +47,17 @@ Public Class Midi_IO_2
         Session = MidiSession.Create("Midi_IO_2 Session")
         SessionIsOpen = True
 
+        Instance = Me
+
         StartEndpointWatcher()
 
+        ReadThread.IsBackground = True
+        ReadThread.Start()
         Return True
     End Function
 
     Public Sub StopMidiSession()
+
         If EndpointWatcher IsNot Nothing Then
             StopEndpointWatcher()
         End If
@@ -67,71 +72,19 @@ Public Class Midi_IO_2
 #End Region
 
 #Region "Input Output"
-    Public Class MidiOutput
-        Public Property Name As String = ""
-        Public Session As MidiSession
-        Public Endpoint As MidiEndpointDeviceInformation
-        Public EndpointConnection As MidiEndpointConnection
-        Public PortDeviceID As String = ""
-        Public ID As Integer
-        Public Group As Byte
-
-        Public Function Open() As Boolean
-            If Session Is Nothing Then Return False
-            If Session.IsOpen = False Then Return False
-            If Endpoint Is Nothing Then Return False
-            If EndpointConnection IsNot Nothing Then
-                If Session.Connections.Values.Contains(EndpointConnection) Then Return True ' already open
-            End If
-            ' try connect
-            EndpointConnection = Session.CreateEndpointConnection(Endpoint.EndpointDeviceId)
-            If EndpointConnection Is Nothing Then Return False
-            'Wire up the message event handler before open
-            EndpointConnection.Open()
-            Return True
-        End Function
 
 
-    End Class
 
-    Public Class MidiInput
-        Public Property Name As String = ""
-        Public Session As MidiSession
-        Public Endpoint As MidiEndpointDeviceInformation
-        Public EndpointConnection As MidiEndpointConnection
-        Public PortDeviceID As String = ""
-        Public ID As Integer
-        Public Group As Byte
-
-
-        Public Function Open() As Boolean
-            If Session Is Nothing Then Return False
-            If Session.IsOpen = False Then Return False
-            If Endpoint Is Nothing Then Return False
-            If EndpointConnection IsNot Nothing Then
-                If Session.Connections.Values.Contains(EndpointConnection) Then Return True ' already open
-            End If
-            ' try connect
-            EndpointConnection = Session.CreateEndpointConnection(Endpoint.EndpointDeviceId)
-            If EndpointConnection Is Nothing Then Return False
-            'xxxx
-            'Wire up the message event handler before open
-            EndpointConnection.Open()
-            Return True
-        End Function
-
-    End Class
-
-    Private InOutBaseValue As Integer = 1
-    Private InOutRandom As New Random
+    Private InOutIdBaseValue As Integer = 1
+    Private InOutIdRandom As New Random
 
     Private Function GetNewInOutID() As Integer
         Dim RndVal As Integer
         Dim NewID As Integer
-        RndVal = InOutRandom.Next(31)
-        NewID = InOutBaseValue << 5
+        RndVal = InOutIDRandom.Next(31)
+        NewID = InOutIDBaseValue << 5
         NewID = NewID Or RndVal
-        InOutBaseValue += 1
+        InOutIDBaseValue += 1
         Return NewID
     End Function
 

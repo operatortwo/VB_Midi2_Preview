@@ -4,7 +4,7 @@ Imports Midi_IO_2.Midi_IO_2
 Partial Public Class MainWindow
 
     Private SelectedOutput As MidiOutput
-    Private SelectedInput As MidiInput
+    Private WithEvents SelectedInput As MidiInput
 
 
     Private Sub Ti_IO_Test_Loaded(sender As Object, e As RoutedEventArgs) Handles Ti_IO_Test.Loaded
@@ -55,6 +55,11 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub SelectedInputChanged()
+        If SelectedInput IsNot Nothing Then
+            SelectedInput.Close()
+            SelectedInput = Nothing
+        End If
+
         Dim sel As MidiInput
         sel = TryCast(CmbInputSelector.SelectedItem, MidiInput)
         If sel IsNot Nothing Then
@@ -75,7 +80,10 @@ Partial Public Class MainWindow
                        64,                                                    ' note 120  (&h78)
                        100)
 
-            SelectedOutput.EndpointConnection.SendSingleMessagePacket(ump32)
+            'SelectedOutput.EndpointConnection.SendSingleMessagePacket(ump32)
+            'SelectedOutput.OutShortMessage(&H90, 64, 100)
+
+            SelectedOutput.OutShortMessage(Midi1ChannelVoiceMessageStatus.NoteOn, 0, 64, 100)
         End If
     End Sub
 
@@ -84,13 +92,20 @@ Partial Public Class MainWindow
             Dim ump32 As MidiMessage32 = MidiMessageBuilder.BuildMidi1ChannelVoiceMessage(
                        MidiClock.Now,                                          ' current time
                        New MidiGroup(SelectedOutput.Group),                                       ' Group 5
-                       Midi1ChannelVoiceMessageStatus.NoteOff,                  ' NoteOn (9)
+                       Midi1ChannelVoiceMessageStatus.NoteOn,                  ' NoteOn (9)
                        New MidiChannel(0),                                     ' channel 3
                        64,                                                    ' note 120  (&h78)
                        0)
 
-            SelectedOutput.EndpointConnection.SendSingleMessagePacket(ump32)
+            'SelectedOutput.EndpointConnection.SendSingleMessagePacket(ump32)
+            'SelectedOutput.OutShortMessage(&H90, 64, 0)
+            SelectedOutput.OutShortMessage(Midi1ChannelVoiceMessageStatus.NoteOff, 0, 64, 0)
         End If
+    End Sub
+
+
+    Private Sub MidiInput() Handles SelectedInput.MidiInput
+        Debug.WriteLine("Midi Input Message")
     End Sub
 
 
