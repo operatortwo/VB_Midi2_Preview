@@ -60,4 +60,7 @@ Class MainWindow
         CmbInputSelector.SelectedItem = Nothing
     End Sub
 
+    Private Sub BtnTest_Click(sender As Object, e As RoutedEventArgs) Handles BtnTest.Click
+        mio.DiagTest()
+    End Sub
 End Class

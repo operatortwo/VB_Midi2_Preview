@@ -17,6 +17,7 @@
                     <Label Content="Output:" Margin="0,9,293,0" VerticalAlignment="Top" Padding="0,0,0,0" HorizontalAlignment="Right" Width="40"/>
                     <Label Content="Input:" HorizontalAlignment="Right" Margin="0,0,303,146" VerticalAlignment="Bottom" Padding="0,0,0,0"/>
                     <Label Content="List Midi 1 Ports&#xD;&#xA;using Endpoint Watcher" HorizontalAlignment="Right" Margin="0,30,400,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+                    <Button x:Name="BtnTest" Content="Test" HorizontalAlignment="Left" Margin="315,336,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
 
@@ -27,9 +28,9 @@
                     <Label Content="Output:" HorizontalAlignment="Left" Margin="25,19,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
                     <ComboBox x:Name="CmbOutputSelector" HorizontalAlignment="Left" Margin="25,40,0,0" VerticalAlignment="Top" Width="200"/>
                     <TextBox x:Name="TbOutputData" HorizontalAlignment="Left" Margin="25,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="141" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto"/>
-                    <TextBox x:Name="TbInputData" HorizontalAlignment="Left" Margin="426,194,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="209" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto"/>
-                    <CheckBox x:Name="CbFilterTimingClock" Content="Filter Timing-Clock" HorizontalAlignment="Left" Margin="422,108,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="CbFilterActiveSensing" Content="Filter Active Sensing" HorizontalAlignment="Left" Margin="576,108,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="TbInputData" Margin="426,194,48,53" TextWrapping="Wrap" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto" UndoLimit="0" FontFamily="Consolas"/>
+                    <CheckBox x:Name="CbFilterTimingClock" Content="Filter Timing-Clock" HorizontalAlignment="Left" Margin="422,108,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <CheckBox x:Name="CbFilterActiveSensing" Content="Filter Active Sensing" HorizontalAlignment="Left" Margin="576,108,0,0" VerticalAlignment="Top" IsEnabled="False"/>
                     <Button x:Name="Btn_ID_Request" Content="ID Request" HorizontalAlignment="Left" Margin="64,216,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="Btn_GM_On" Content="GM On" HorizontalAlignment="Left" Margin="175,216,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="BtnCloseSelectedOutput" Content="Close" HorizontalAlignment="Left" Margin="274,41,0,0" VerticalAlignment="Top"/>

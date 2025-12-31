@@ -85,6 +85,7 @@ Partial Public Class Midi_IO_2
 
         '--- inputs
         For Each ep In EndpointList
+            Dim rcv As New MessageReceiver
             Dim PortDevInfoList As IReadOnlyList(Of MidiEndpointAssociatedPortDeviceInformation)
             PortDevInfoList = ep.Value.FindAllAssociatedMidi1PortsForThisEndpoint(Midi1PortFlow.MidiMessageSource, False)
 
@@ -94,6 +95,7 @@ Partial Public Class Midi_IO_2
                 inp.Group = port.Group.Index
                 inp.PortDeviceID = port.PortDeviceId
                 inp.Endpoint = ep.Value
+                inp.MessageReceiver = rcv               ' 1 receiver per Endpoint
                 MidiInputList2.Add(inp)
             Next
         Next
@@ -134,7 +136,7 @@ Partial Public Class Midi_IO_2
             End If
         Next
 
-        '--- remove unlisted Outputs (contained in List1 but not in List2 ---
+        '--- remove unlisted Inputs (contained in List1 but not in List2 ---
         For i = list1.Count - 1 To 0 Step -1
             Dim inp As MidiInput = list1(i)
             If list2.Exists(Function(x) x.Name = inp.Name) = False Then

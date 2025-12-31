@@ -5,7 +5,7 @@ Partial Public Class MainWindow
 
     Private SelectedOutput As MidiOutput
     Private WithEvents SelectedInput As MidiInput
-
+    Private WithEvents Receiver As MessageReceiver
 
     Private Sub Ti_IO_Test_Loaded(sender As Object, e As RoutedEventArgs) Handles Ti_IO_Test.Loaded
         UpdateInputSelector()
@@ -65,6 +65,7 @@ Partial Public Class MainWindow
         If sel IsNot Nothing Then
             sel.Open()
             SelectedInput = sel
+            Receiver = SelectedInput.MessageReceiver
         Else
             SelectedInput = Nothing
         End If
@@ -104,9 +105,55 @@ Partial Public Class MainWindow
     End Sub
 
 
-    Private Sub MidiInput() Handles SelectedInput.MidiInput
-        Debug.WriteLine("Midi Input Message")
+
+    Private icount As Long
+
+    Private Sub MsgInput(timestamp As ULong, dw0 As UInteger, dw1 As UInteger, dw2 As UInteger, dw3 As UInteger) Handles Receiver.MsgReceived
+
+        Dim str As String
+        Dim tickdiff As String
+
+        tickdiff = TickDiffToMilliseconds(MidiClock.Now, timestamp)
+
+        Dim nfo As MidiMessageInfo
+        nfo = GetMidiMessageInfo(dw0, dw1, dw2, dw3)
+
+        'str = tickdiff & vbTab & "  " & " " & nfo.MessageBitCount & " bits, " & "MT: " &
+        '            nfo.MessageTypeValue & "  " & nfo.MessageTypeDescription
+
+        str = icount & "  " & nfo.MessageBitCount & " bits, " & "MT: " &
+                    nfo.MessageTypeValue & "  " &
+                    timestamp.ToString("x") & "  " &
+                    dw0.ToString("x") & "  " &
+                    dw1.ToString("x") & "  " &
+                    dw2.ToString("x") & "  " &
+                    dw3.ToString("x") & "  " &
+                    vbCrLf & vbTab & nfo.MessageTypeDescription
+
+        Dispatcher.BeginInvoke(New WriteInputMsg_Delegate(AddressOf WriteInputMsg), str)
+
+        icount += 1
     End Sub
+
+
+
+    Private Delegate Sub WriteInputMsg_Delegate(str As String)
+
+    Private Sub WriteInputMsg(str As String)
+        If str Is Nothing Then Exit Sub
+
+        If TbInputData.LineCount > 1000 Then
+            TbInputData.Clear()
+        End If
+
+        TbInputData.AppendText(str)
+        TbInputData.AppendText(vbCrLf)
+        TbInputData.ScrollToEnd()
+
+
+    End Sub
+
+
 
 
 End Class

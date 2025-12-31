@@ -25,6 +25,7 @@
 
 	<PropertyGroup>
 		<CsWinRTEnabled>false</CsWinRTEnabled>
+		<Copyright>Copyright @  2025  operatortwo</Copyright>
 	</PropertyGroup>
 	
   <ItemGroup>

@@ -51,8 +51,6 @@ Public Class Midi_IO_2
 
         StartEndpointWatcher()
 
-        ReadThread.IsBackground = True
-        ReadThread.Start()
         Return True
     End Function
 
