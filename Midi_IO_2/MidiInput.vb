@@ -9,7 +9,7 @@ Partial Public Class Midi_IO_2
         Public Property Name As String = ""
         Public Session As MidiSession
         Public Endpoint As MidiEndpointDeviceInformation
-        Public EndpointConnection As MidiEndpointConnection
+        Public EndpointConnection As MidiEndpointConnection             ' needed ?
         Public MessageReceiver As MessageReceiver
         Public PortDeviceID As String = ""
         Public ID As Integer
@@ -32,7 +32,8 @@ Partial Public Class Midi_IO_2
 
             ' try connect
 
-            If EndpointConnection Is Nothing Then
+            'If EndpointConnection Is Nothing Then
+            If MessageReceiver.EndpointConnection Is Nothing Then
                 EndpointConnection = Session.CreateEndpointConnection(Endpoint.EndpointDeviceId)
                 'If EndpointConnection Is Nothing Then Return False      ' return if CreateConnection failed            
                 ' Wire up the message event handler before open
@@ -97,6 +98,7 @@ Partial Public Class Midi_IO_2
         End Sub
 
         Private Sub StartListening()
+            InputQueue = New ConcurrentQueue(Of UInteger)
             ReadInputQueueTask = Task.Run(AddressOf ReadInputQueue)
             Listening = True
             Debug.WriteLine("--Listening")
