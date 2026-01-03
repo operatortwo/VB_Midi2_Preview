@@ -27,7 +27,7 @@
                     <Label Content="Input:" HorizontalAlignment="Left" Margin="426,19,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
                     <Label Content="Output:" HorizontalAlignment="Left" Margin="25,19,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
                     <ComboBox x:Name="CmbOutputSelector" HorizontalAlignment="Left" Margin="25,40,0,0" VerticalAlignment="Top" Width="200"/>
-                    <TextBox x:Name="TbOutputData" HorizontalAlignment="Left" Margin="25,293,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="325" Height="210" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto"/>
+                    <TextBox x:Name="TbOutputData" HorizontalAlignment="Left" Margin="25,293,0,53" TextWrapping="Wrap" Width="325" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto"/>
                     <TextBox x:Name="TbInputData" Margin="422,194,48,53" TextWrapping="Wrap" IsReadOnly="True" Background="#FFF7F7F7" VerticalScrollBarVisibility="Auto" UndoLimit="0" FontFamily="Consolas"/>
                     <CheckBox x:Name="CbFilterTimingClock" Content="Filter Timing-Clock" HorizontalAlignment="Left" Margin="422,108,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="CbFilterActiveSensing" Content="Filter Active Sensing" HorizontalAlignment="Left" Margin="576,108,0,0" VerticalAlignment="Top"/>
@@ -42,6 +42,7 @@
                     <Slider x:Name="SldSysExNumValues" HorizontalAlignment="Left" Margin="141,179,0,0" VerticalAlignment="Top" Width="120" Maximum="130" Value="5" SmallChange="1" LargeChange="5" IsSnapToTickEnabled="True"/>
                     <TextBox x:Name="TbSldSysExNumValues" HorizontalAlignment="Left" Margin="263,205,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" IsReadOnly="True" Text="{Binding Value, ElementName=SldSysExNumValues}" HorizontalContentAlignment="Center"/>
                     <Label Content="count" HorizontalAlignment="Left" Margin="270,180,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
+                    <CheckBox x:Name="CbFilterSysEx7raw" Content="Filter SysEx7 raw" HorizontalAlignment="Left" Margin="733,108,0,0" VerticalAlignment="Top" IsChecked="True"/>
 
 
 

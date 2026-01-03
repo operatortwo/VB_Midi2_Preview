@@ -73,98 +73,104 @@ Partial Public Class Midi_IO_2
             mdword = mdword << 8
             mdword = mdword Or data2            ' data2             8 bits
             EndpointConnection.SendSingleMessageWords(MidiClock.Now, mdword)
+
+
         End Sub
 
+        Private WordList As New List(Of UInteger)
+
         Public Function OutLongMessage(buffer() As Byte) As Boolean
+            ' max. Words is unknown, cannot find
+            ' (EndpointConnection) GetSupportedMaxMidiWordsPerTransmission
+
+            If buffer Is Nothing Then Return False
             If buffer.Length < 2 Then Return False                      ' at least 2 data bytes
             If buffer(0) <> &HF0 Then Return False
             If buffer(buffer.Length - 1) <> &HF7 Then Return False
-            Dim newlen As Integer = buffer.Length - 2
-            Dim buffer2 = New Byte(newlen - 1) {}
 
-            For i = 1 To buffer.Length - 2
-                buffer2(i - 1) = buffer(i)
-            Next
+            If WordList.Count > 0 Then WordList.Clear()
 
-            Dim barr(3) As Byte                 ' dword convert helper
-            Dim dwcnt As Integer = 2 * Math.Ceiling(buffer2.Length / 6)
-            If dwcnt < 2 Then
-                dwcnt = 2       ' at least 2 dwords, allows empty and len=1 SysEx, even it makes no sense
+            Dim msgcnt As Integer = Math.Ceiling(buffer.Length - 2 / 6)
+            If msgcnt < 1 Then
+                msgcnt = 1       ' at least 1 msg, allows empty and len=1 SysEx, even it makes no sense
             End If
-            Dim dwordArray(dwcnt - 1) As UInteger
 
-            If buffer2.Length <= 6 Then
-                ' single UMP Mesage
-                Dim msgType As Byte = 3
-                ' Group
-                Dim status = 0      ' Complete System Exclusive Message in one UMP
-                Dim bytecount As Byte = buffer2.Length      ' number of valid bytes
+            Dim bytecount As Integer = buffer.Length - 2
 
-                dwordArray(0) = SysEx7_FormatFirstDword(Group, status, bytecount, buffer2)
-                dwordArray(1) = SysEx7_FormatSecondDword(buffer2)
+            Dim srcndx As Integer = 1
 
-                Dim ret As MidiSendMessageResults
-                ret = EndpointConnection.SendMultipleMessagesWordList(MidiClock.Now, dwordArray)
+            Dim ret As Byte
+            Do
+                ret = WriteWordlist(buffer, srcndx)
+                If ret = 0 Then Exit Do
+                If ret = 3 Then Exit Do
+            Loop
 
-            Else
-                ' does not fit in 1 UMP message:
-                ' SysEx start UMP message (status 1)        need 1
-                ' SysEx continue UMP message (status 2)         count 0 to x
-                ' SysEx end UMP message (status 3)          need 1
 
-                Dim continueMsgCount As Integer
-                If buffer2.Length > 12 Then
-                    continueMsgCount = (Math.Ceiling(buffer2.Length / 6) - 2)
-                End If
-
-                ' start
-                ' coninue
-                ' end
-            End If
+            Dim res As MidiSendMessageResults
+            res = EndpointConnection.SendMultipleMessagesWordList(MidiClock.Now, WordList)
 
             Return True
         End Function
 
 
-        Private Function SysEx7_FormatFirstDword(group As Byte, status As Byte, bytecount As Byte, buffer() As Byte) As UInteger
-            Dim val As UInteger
+        Private Function WriteWordlist(buffer() As Byte, ByRef ndx As Integer) As Byte
+            Dim maxindex As Integer = buffer.Length - 2     ' len-1 -F7
+            Dim status As Byte
 
-            val = 3                     ' MessageType 3
-            val = val << 4
-            val = val Or group
-            val = val << 4
-            val = val Or status
-            val = val << 4
-            val = val Or bytecount
-            'val = val << 8
+            If maxindex <= 6 Then
+                status = 0                          ' Single UMP Message
+            ElseIf ndx = 1 Then
+                status = 1                          ' SysEx Start UMP Message
+            ElseIf (ndx + 6) < maxindex Then
+                status = 2                          ' SysEx Continue UMP Message
+            Else
+                status = 3                          ' SysEx End Ump Message
+            End If
 
-            Dim buflen As Integer = buffer.Length
+            Dim numbytes As Integer = maxindex - ndx + 1
+            If numbytes > 6 Then
+                numbytes = 6
+            End If
 
-            For i = 0 To 1
-                val = val << 8
-                If i < buflen Then
-                    val = val Or buffer(i)
+            Dim dw0 As UInteger
+            dw0 = 3                     ' MessageType 3
+            dw0 = dw0 << 4
+            dw0 = dw0 Or Group
+            dw0 = dw0 << 4
+            dw0 = dw0 Or status
+            dw0 = dw0 << 4
+            dw0 = dw0 Or numbytes
+
+            Dim val As Byte
+
+            For i = 1 To 2
+                dw0 = dw0 << 8
+                val = 0
+                If ndx <= maxindex Then
+                    val = buffer(ndx)
+                    ndx += 1
                 End If
+                dw0 = dw0 Or val
             Next
 
-            Return val
-        End Function
-
-
-        Private Function SysEx7_FormatSecondDword(buffer() As Byte) As UInteger
-            Dim val As UInteger
-
-            Dim readlen As Integer = buffer.Length - 2
-
-            For i = 0 To 3
-                val = val << 8
-                If i < readlen Then
-                    val = val Or buffer(i + 2)
+            Dim dw1 As UInteger
+            For i = 1 To 4
+                dw1 = dw1 << 8
+                val = 0
+                If ndx <= maxindex Then
+                    val = buffer(ndx)
+                    ndx += 1
                 End If
+                dw1 = dw1 Or val
             Next
 
-            Return val
+            WordList.Add(dw0)
+            WordList.Add(dw1)
+
+            Return status
         End Function
+
 
 
     End Class

@@ -77,4 +77,8 @@ Class MainWindow
     Private Sub BtnSysExTest_Click(sender As Object, e As RoutedEventArgs) Handles BtnSysExTest.Click
         SendSysExTestData()
     End Sub
+
+    Private Sub CbShowSysEx7_Click(sender As Object, e As RoutedEventArgs) Handles CbFilterSysEx7raw.Click
+        FilterSysEx7raw = CbFilterSysEx7raw.IsChecked
+    End Sub
 End Class

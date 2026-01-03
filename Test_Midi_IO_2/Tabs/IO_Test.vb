@@ -8,9 +8,14 @@ Partial Public Class MainWindow
     Private WithEvents MidiIn1 As MidiInput
     Private WithEvents Receiver As MessageReceiver
 
+    ' This enables fast querying in the input sub, which is in a different thread.
+    Private FilterSysEx7raw As Boolean
+
+
     Private Sub Ti_IO_Test_Loaded(sender As Object, e As RoutedEventArgs) Handles Ti_IO_Test.Loaded
         UpdateInputSelector()
         UpdateOutputSelector()
+        FilterSysEx7raw = CbFilterSysEx7raw.IsChecked
     End Sub
 
     Private Sub UpdateInputSelector()
@@ -198,8 +203,6 @@ Partial Public Class MainWindow
 
         tickdiff = TickDiffToMilliseconds(MidiClock.Now, timestamp)
 
-
-
         Dim nfo As MidiMessageInfo
         nfo = GetMidiMessageInfo(dw0, dw1, dw2, dw3)
 
@@ -216,12 +219,109 @@ Partial Public Class MainWindow
                     vbCrLf & vbTab & nfo.MessageTypeDescription & "  " &
                     "Group: " & nfo.Group
 
-        Dispatcher.BeginInvoke(New WriteInputMsg_Delegate(AddressOf WriteInputMsg), str)
+        If nfo.MessageTypeValue = MessageType.DataMessage64 Then        ' mt3 = SysEx7
+            If FilterSysEx7raw = False Then
+                Dispatcher.BeginInvoke(New WriteInputMsg_Delegate(AddressOf WriteInputMsg), str)
+            End If
+        Else
+            Dispatcher.BeginInvoke(New WriteInputMsg_Delegate(AddressOf WriteInputMsg), str)
+        End If
+
+
+        '--- SysEx7 ---
+        Dim ret As Byte()
+            ret = CollectSysEx7bytes(dw0, dw1)
+            If ret IsNot Nothing Then
+                Dim bstr As String
+                bstr = BitConverter.ToString(ret)
+                bstr = bstr.Replace("-", " ")
+                Dispatcher.BeginInvoke(New WriteInputMsg_Delegate(AddressOf WriteInputMsg), bstr)
+            End If
 
         icount += 1
     End Sub
 
 
+    Private SysEx7coll As New List(Of Byte)
+    Private SysEx7collBytes(5) As Byte          ' temporary buffer for bytes
+
+    Private Function CollectSysEx7bytes(dw0 As UInteger, dw1 As UInteger) As Byte()
+        If (dw0 >> 28) <> 3 Then Return Nothing
+        Dim status As Byte
+        status = (dw0 >> 20) And &HF
+
+        If status = 0 Then
+            ' If status = 0 then Complete System Exclusive Message in one UMP
+            Return CollectSysEx7bytes_single(dw0, dw1)
+        ElseIf status = 1 Then
+            ' System Exclusive Start UMP
+            If SysEx7coll.Count > 0 Then SysEx7coll.Clear()
+            SysEx7coll.Add(&HF0)                                ' start byte
+            CollectSysEx7bytes_ReadBytes(dw0, dw1)
+        ElseIf status = 2 Then
+            ' System Exclusive Continue UMP
+            CollectSysEx7bytes_ReadBytes(dw0, dw1)
+        ElseIf status = 3 Then
+            ' System Exclusive End UMP
+            CollectSysEx7bytes_ReadBytes(dw0, dw1)
+            SysEx7coll.Add(&HF7)                                ' end byte
+
+            ' copy values to buffer
+            Dim retbuf(SysEx7coll.Count - 1) As Byte
+            Dim ndx As Integer
+            For Each elem In SysEx7coll
+                retbuf(ndx) = elem
+                ndx += 1
+            Next
+
+            SysEx7coll.Clear()
+            Return retbuf
+        End If
+
+        Return Nothing
+    End Function
+
+    Private Function CollectSysEx7bytes_single(dw0 As UInteger, dw1 As UInteger) As Byte()
+        ' checked: mt=3 and status=0
+        If SysEx7coll.Count > 0 Then SysEx7coll.Clear()
+        SysEx7coll.Add(&HF0)                                ' start byte
+        CollectSysEx7bytes_ReadBytes(dw0, dw1)
+        SysEx7coll.Add(&HF7)                                ' end byte
+
+        ' copy values to buffer
+        Dim retbuf(SysEx7coll.Count - 1) As Byte
+        Dim ndx As Integer
+            For Each elem In SysEx7coll
+                retbuf(ndx) = elem
+                ndx += 1
+            Next
+
+        SysEx7coll.Clear()
+        Return retbuf
+    End Function
+
+    Private Sub CollectSysEx7bytes_ReadBytes(dw0 As UInteger, dw1 As UInteger)
+        Dim numbytes As Byte
+        numbytes = (dw0 >> 16) And &HF      ' nibble
+        If numbytes > 6 Then numbytes = 6     ' max. 6 bytes
+
+        SysEx7collBytes(0) = (dw0 >> 8) And &H7F
+        SysEx7collBytes(1) = dw0 And &H7F
+
+        SysEx7collBytes(2) = (dw1 >> 24) And &H7F
+        SysEx7collBytes(3) = (dw1 >> 16) And &H7F
+        SysEx7collBytes(4) = (dw1 >> 8) And &H7F
+        SysEx7collBytes(5) = dw1 And &H7F
+
+        For i = 1 To numbytes
+            SysEx7coll.Add(SysEx7collBytes(i - 1))
+        Next
+    End Sub
+
+
+#End Region
+
+#Region "Auxiliary"
 
     Private Delegate Sub WriteInputMsg_Delegate(str As String)
 
@@ -249,8 +349,6 @@ Partial Public Class MainWindow
         TbInputData.ScrollToEnd()
     End Sub
 
-#End Region
-
     Private Sub WriteOutputHex(buffer() As Byte)
         Dim str As String
         str = BitConverter.ToString(buffer)
@@ -265,7 +363,7 @@ Partial Public Class MainWindow
         TbOutputData.ScrollToEnd()
     End Sub
 
-
+#End Region
 
 
 End Class
