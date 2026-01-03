@@ -11,6 +11,8 @@ Class MainWindow
         Else
             WriteMessageLine(mio.ErrorMessage)
         End If
+
+        TabControl1.SelectedItem = Ti_IO_Test
     End Sub
 
     Private Sub Window_Closing(sender As Object, e As ComponentModel.CancelEventArgs)
@@ -62,5 +64,17 @@ Class MainWindow
 
     Private Sub BtnTest_Click(sender As Object, e As RoutedEventArgs) Handles BtnTest.Click
         mio.DiagTest()
+    End Sub
+
+    Private Sub BtnClearTbInputData_Click(sender As Object, e As RoutedEventArgs) Handles BtnClearTbInputData.Click
+        TbInputData.Clear()
+    End Sub
+
+    Private Sub BtnClearTbOutputData_Click(sender As Object, e As RoutedEventArgs) Handles BtnClearTbOutputData.Click
+        TbOutputData.Clear()
+    End Sub
+
+    Private Sub BtnSysExTest_Click(sender As Object, e As RoutedEventArgs) Handles BtnSysExTest.Click
+        SendSysExTestData()
     End Sub
 End Class

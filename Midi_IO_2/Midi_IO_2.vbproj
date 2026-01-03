@@ -7,7 +7,7 @@
 
 	<PropertyGroup>
 		<CsWinRTEnabled>false</CsWinRTEnabled>
-		<Copyright>Copyright @  2025  operatortwo</Copyright>
+		<Copyright>Copyright @  2025 - 2026  operatortwo</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

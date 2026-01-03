@@ -25,11 +25,6 @@ Partial Public Class Midi_IO_2
             '-- MidiEndpointConnection is tied to the lifetime of the session.
             '-- a session should generally not open more than one connection to a single endpoint
 
-            'If EndpointConnection IsNot Nothing Then
-            '    If Session.Connections.Values.Contains(EndpointConnection) Then
-            '    End If
-            'End If
-
             ' try connect
 
             'If EndpointConnection Is Nothing Then
@@ -54,6 +49,14 @@ Partial Public Class Midi_IO_2
             Return True
         End Function
 
+        Public Sub SetFilterTimingClock(state As Boolean)
+            MessageReceiver.FilterTimingClock = state
+        End Sub
+
+        Public Sub SetFilterActiveSensing(state As Boolean)
+            MessageReceiver.FilterActiveSensing = state
+        End Sub
+
     End Class
 
     '---------- 1 Receiver per Endpoint ----------
@@ -63,6 +66,8 @@ Partial Public Class Midi_IO_2
         Public EndpointConnection As MidiEndpointConnection
         Public Listener As New List(Of MidiInput)
         Private Listening As Boolean
+        Public FilterTimingClock As Boolean
+        Public FilterActiveSensing As Boolean
 
         Private InputQueue As New ConcurrentQueue(Of UInteger)
 
@@ -117,14 +122,9 @@ Partial Public Class Midi_IO_2
         Public Sub MessageReceivedHandler(sender As IMidiMessageReceivedEventSource, args As MidiMessageReceivedEventArgs)
             If Listening = False Then Exit Sub
 
-            Thread.BeginCriticalRegion()
+            'Thread.BeginCriticalRegion()
 
             If InputQueue.Count < InputQueueCountLimit Then
-
-                '--- Timestamp 64-bit
-                InputQueue.Enqueue(GetHighDWord(args.Timestamp))
-                InputQueue.Enqueue(GetLowDWord(args.Timestamp))
-
 
                 '--- up to 4* 32-bit values ---
 
@@ -135,6 +135,22 @@ Partial Public Class Midi_IO_2
                 Dim wret As Byte                                        ' number of valid FillWords
                 wret = args.FillWords(dword0, dword1, dword2, dword3)
 
+                '--- Filter ---
+
+                If FilterTimingClock = True Then
+                    If IsTimingClockMessage(dword0) = True Then Exit Sub
+                End If
+
+                If FilterActiveSensing = True Then
+                    If IsActiveSensMessage(dword0) = True Then Exit Sub
+                End If
+
+
+                    '--- Timestamp 64-bit
+                    InputQueue.Enqueue(GetHighDWord(args.Timestamp))
+                InputQueue.Enqueue(GetLowDWord(args.Timestamp))
+
+                '--- Data ---
                 InputQueue.Enqueue(dword0)
                 InputQueue.Enqueue(dword1)
                 InputQueue.Enqueue(dword2)
@@ -144,7 +160,7 @@ Partial Public Class Midi_IO_2
                 DiscardedMidiMessages += 1
             End If
 
-            Thread.EndCriticalRegion()
+            'Thread.EndCriticalRegion()
         End Sub
 
         Private readcount As Long
@@ -192,9 +208,23 @@ Partial Public Class Midi_IO_2
         End Sub
 
 
+        Private Function IsTimingClockMessage(dword0 As UInteger) As Boolean
+            If dword0 >> 28 = 1 Then           ' check if MessageType = 1
+                If ((dword0 >> 16) And &HFF) = &HF8 Then Return True
+            End If
+            Return False
+        End Function
+
+        Private Function IsActiveSensMessage(dword0 As UInteger) As Boolean
+            If dword0 >> 28 = 1 Then           ' check if MessageType = 1
+                If ((dword0 >> 16) And &HFF) = &HFE Then Return True
+            End If
+            Return False
+        End Function
 
         Private Function GetHighDWord(value As ULong) As UInteger
             Return value >> 32
+            Return False
         End Function
 
         Private Function GetLowDWord(value As ULong) As UInteger

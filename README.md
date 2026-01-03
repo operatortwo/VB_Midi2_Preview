@@ -123,7 +123,7 @@ First draft of a library for using the midi2 services.
 
 
 ## Test_Midi_IO_2
-Example of an application that uses Midi2.
+Example of an application that uses the Midi_IO_2 library
 
 
 ## X_Fragments
